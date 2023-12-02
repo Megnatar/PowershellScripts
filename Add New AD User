@@ -28,34 +28,8 @@ $Today = get-Date -Format 'yy-MM-dd'                                            
 # Array met ongeldige groepen. Ongeldige groepen zijn groepen die appart moeten worden aangevraagd of niet meer van toepassing zijn.
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
-                   "BedrijfsHulpVerlening", `
-                   "Calamiteitenteam", `
-                   "JongeStadgenoten", `
-                   "Sec_Citrix_VDI_PowerUser", `
-                   "Sec_Citrix_VDI_Keyboard", `
-                   "Sec_SharePointOnline_ITs2020_Leden", `
-                   "Sec_Citrix_Testomgeving_KeyUsers", `
-                   "Sec_Jong MYDOMAIN", `
-                   "Sec_MBX_Jong_MYDOMAIN", `
-                   "Sec_EM_Laptops_GG", `
-                   "Sec_MobileIron_GG", `
-                   "Sec_MobileIron_Acronis_GG", `
-                   "Sec_MobileIron_Acronis_Android_GG", `
-                   "Sec_Microsoft365_Defender_licentie", `
-                   "Sec_Microsoft365_PowerBI_Premium_licentie", `
-                   "Sec_Microsoft365_Project_licentie", `
-                   "Sec_Microsoft365_Visio_licentie", `
-                   "Sec_Microsoft365_MyOfficeDays", `
-                   "Sec_Citrix_Testomgeving_Tobias FU update", `
-                   "Sec_OR", `
-                   "Vry~CtrlWORK^", `
-                   "Vry~Defender365^", `
-                   "Vry~IrFanView^", `
-                   "Vry~NitroPDF^", `
-                   "Vry~Power_BI_Premium^", `
-                   "Vry~Project365^", `
-                   "Vry~Visio365^", `
-                   "Vry~Data_VO^"
+                   "Group1", `
+                   "Group2"
                    )
 
 # Vraag naar de volledige naam van de nieuwe gebruiker/medewerker.
