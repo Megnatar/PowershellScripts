@@ -8,8 +8,8 @@
 cls
 
 # Dit script is afhankelijk van deze onpremisse servers.
-$ServerExists = 'SOMESERVERTOPING'
-$FederationServer = 'SOMEFEDERATIONSERVERNAME'
+$ServerExists = 'SOME_SERVER_TO_PING'
+$FederationServer = 'SOME_FEDERATION_SERVER_NAME'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True als wij in test zitten.
