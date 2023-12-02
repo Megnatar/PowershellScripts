@@ -3,11 +3,6 @@
     Beta v0.9
 
     Gecodeerd door Jos Severijnse.
-    Co auteur, Michiel Vreeken, Thanks voor de hulp hier en daar!
-
-    ToDo: Zorg dat nieuwe gebruikers met exotische karakers in de naam ook op de juiste manier worden aangemaakt.
-          Het zal voor mij makkelijk zijn als powershell reguliere expressies (RegEx) ondersteunt.
-
 #>
 # Leeg het scherm voor nieuw console script.
 cls
