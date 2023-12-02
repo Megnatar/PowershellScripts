@@ -193,7 +193,6 @@ Foreach ($group in $ExampleUserGroups) {
 
 # Maakt de Exchange online mailbox aan in de productieomgeving.
 # Deze stap wordt overgeslagen als er een account in de testomgeving wordt aangemaakt.
-# En moet ook worden uitgevoerd in het powershell console van Exchange, werkt nu dus nog niet.
 if ($TestOmgeving -eq 'False') {
     'Momentje geduld, de Exchange Management Shell snap-in wordt geladen.'
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
