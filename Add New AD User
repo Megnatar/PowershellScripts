@@ -1,39 +1,64 @@
 <#
     Script om een nieuwe user in AD toe te voegen.
-    Beta v1.0
+    AddAdUser Versie 1.0
 
     Gecodeerd door Jos Severijnse.
+    Co auteur, Michiel Vreeken, Thanks voor de hulp hier en daar!
+
 #>
 # Leeg het scherm voor nieuw console script.
 cls
 
 # Dit script is afhankelijk van deze onpremisse servers.
-$ServerExists = 'SOME_SERVER_TO_PING'
-$FederationServer = 'SOME_FEDERATION_SERVER_NAME'
+$ServerExists = 'CTXRESAM01'
+$FederationServer = 'ADFS03'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
-$TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True als wij in test zitten.
-$Domain = If ($TestOmgeving -eq 'False') {"@MYDOMAIN.nl"} Else {"@MYDOMAINtest.nl"}     # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
-$NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart.
-$ExpirationTime = '00:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel maar kan gebruikt worden.
-$ProfilePath = '\\connect.local\MYDOMAIN\users\'                                        # Pad naar alle gebruikers profielen (RUPs).
+$TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
+$Domain = If ($TestOmgeving) {"@stadgenoottest.nl"} Else {"@stadgenoot.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
+$NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
+$ExpirationTime = '00:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
+$ProfilePath = '\\connect.local\Stadgenoot\users\'                                      # Path naar alle gebruikers profielen (RUPs), en is zonder de UPN naam.
 $HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
-$Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag,
+$Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
 
 # Array met ongeldige groepen. Ongeldige groepen zijn groepen die appart moeten worden aangevraagd of niet meer van toepassing zijn.
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
-                   "Group1", `
-                   "Group2"
+                   "BedrijfsHulpVerlening", `
+                   "Calamiteitenteam", `
+                   "JongeStadgenoten", `
+                   "Sec_Citrix_VDI_PowerUser", `
+                   "Sec_Citrix_VDI_Keyboard", `
+                   "Sec_SharePointOnline_ITs2020_Leden", `
+                   "Sec_Citrix_Testomgeving_KeyUsers", `
+                   "Sec_Jong Stadgenoot", `
+                   "Sec_MBX_Jong_Stadgenoot", `
+                   "Sec_EM_Laptops_GG", `
+                   "Sec_MobileIron_GG", `
+                   "Sec_MobileIron_Acronis_GG", `
+                   "Sec_MobileIron_Acronis_Android_GG", `
+                   "Sec_Microsoft365_Defender_licentie", `
+                   "Sec_Microsoft365_PowerBI_Premium_licentie", `
+                   "Sec_Microsoft365_Project_licentie", `
+                   "Sec_Microsoft365_Visio_licentie", `
+                   "Sec_Microsoft365_MyOfficeDays", `
+                   "Sec_Citrix_Testomgeving_Tobias FU update", `
+                   "Sec_OR", `
+                   "Vry~CtrlWORK^", `
+                   "Vry~Defender365^", `
+                   "Vry~IrFanView^", `
+                   "Vry~NitroPDF^", `
+                   "Vry~Power_BI_Premium^", `
+                   "Vry~Project365^", `
+                   "Vry~Visio365^", `
+                   "Vry~Data_VO^"
                    )
 
 # Vraag naar de volledige naam van de nieuwe gebruiker/medewerker.
-
 ''
 'Geef de volledige naam van onze nieuwe medewerker op!'
-
-# Zolang de variabele $Newuser leeg is.
-While (!$NewUser) {
+While (!$NewUser) {                                                 # Zolang de variabele $Newuser leeg is.
     $NewUser = Read-Host 'Naam van de medewerker'
 
     # Ik had verwacht dat als de hele statement in de while loop false was. De body van de loop niet wordt uitgevoer.
@@ -46,13 +71,12 @@ While (!$NewUser) {
     }
 }
 
-# Maak variabele aan voor de voornaam, volledige achternaam, achternaam zonder toevoegsels, upn, login naam, en path to profile folder.
+# Maak variabele aan voor de voornaam, volledige achternaam, achternaam zonder toevoegsels, upn en login naam.
 $Name = $NewUser.Substring(0, $NewUser.IndexOf(" "))
 $FullSurname = $NewUser.Substring($NewUser.IndexOf(" ")+1)
 $Surname = $FullSurname.split()[-1]
 $Upn = $Name[0] + $FullSurname.replace(' ', '') + $Domain
 $Account = (($Name[0] + $Name[1] + $Surname[0] + $Surname[1]).tolower() + "*")
-$ProfilePath = $ProfilePath + $SamAccount
 
 # Haal de namen van alle vergelijkbare SAM accounts op en sorteer de lijst van boven naar beneden.
 $SamAccount = (Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object SamAccountName -Descending | Select SamAccountName -First 1).SamAccountName
@@ -73,7 +97,8 @@ If ($SamAccount.Substring(4, 2) -eq '99') {
 # Is het account opvolgnummer kleiner of groter dan 10? Er kunnen dus 99 accounts gemaakt worden waarvan de letters het zelfde zijn.
 if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
 
-    # Negeer een nieuw useraccount.
+    # Negeer een nieuw 01 account. Maakt alle SAM account namen van 02 tot en met 09 aan.
+    # Misschien dat de !$NewAccount ook in de defenitie van de eerte if gezet kan worden. Zoiets als -and !$NewAccount.
     if (!$NewAccount) {
         $int =  [int]$SamAccount.Substring(4, 2) + 1
         $int = '0' + $int 
@@ -81,9 +106,13 @@ if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
     }
 
 } else {
+    # Alle accounts vanaf 10 tot en met 99
     $int = [int]$SamAccount.Substring(4, 2) + 1
     $SamAccount = $SamAccount.Replace($SamAccount.Substring(4, 2), $int)
 }
+
+# Het Sam account is pas vanaf hier bepaald, dus daarom kan nu de var voor het profilepad gemaakt worden.
+$ProfilePath = $ProfilePath + $SamAccount
 
 # Vraag de voor + achternaam van het voorbeeld account op.
 ''
@@ -106,7 +135,7 @@ $Department  = (Get-ADUser -identity $ExampleLSam -Properties * | select Departm
 $Company = (Get-ADUser -identity $ExampleLSam -Properties * | select Company).Company
 
 # In welk OU moet het account worden aangemaakt.
-$Path = ((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).Substring(((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).IndexOf(',')+1)
+$OrganizationalUnit = ((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).Substring(((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).IndexOf(',')+1)
 
 # Haal alle groepslidmaatschappen van het voorbeeld account op.
 $ExampleUserGroups = (Get-ADPrincipalGroupMembership $ExampleLSam | select name).name
@@ -116,18 +145,19 @@ Foreach ($group in $ExampleUserGroups) {
     if ($GroupToRemove.Contains($group)) {
 
         # Wel een vreemde manier om waardes uit een array te halen. Ik ben pop of remove at (index) o.i.d gewend.
-        $ExampleUserGroups = $ExampleUserGroups -ne $group
+        $ExampleUserGroups = ($ExampleUserGroups -ne $group)
     } 
 }
 
 # Vraag op wanneer het accout moet verlopen.
 ''
-'Geef de verloopdatum van het account op!'
-'De datum moet op deze manier ingevuld worden:'
 ''
-'jaar-maand-dag'
-$Today
+'Geef de verloopdatum van het account op!'
+'De datum moet op deze manier ingevuld worden.'
+''
+'jaar-maand-dag ' + $Today
 
+# Zolang de verloopdatum leeg is of niet good is ingevulde. RETURN
 While (!$ExpirationDate) {
     $Date = Read-Host 'Verloopdatum van het account'
 
@@ -141,9 +171,12 @@ While (!$ExpirationDate) {
 
         $ExpirationDate = $Day + '-' + $Mounth + '-' + $Year
 
+    # Als de datum niet goed is ingevuld. Display massage and return to while.
+    # En leeg de variabele $Date voor hergebruik.
     } else {
-        'Je hebt de datum niet goed ingevuld!'
-        'Vul de datum op de volgende manier in:'
+        'Je hebt de datum niet goed ingevuld.'
+        'Vul de datum op de volgende manier in.'
+        ''
         ''
         'jaar-maand-Dag in twee digit nummers'
          $Today
@@ -184,30 +217,44 @@ New-ADUser `
     -AccountExpirationDate $AccountExpirationDate `
     -HomeDirectory $ProfilePath `
     -HomeDrive $HomeDrive `
-    -Path $Path
+    -Path $OrganizationalUnit
 
+
+# Error handeling.
+# Onderdruk errors voor als groepen e.d niet meer bestaan (wel in de array zitten) of ongeldig zijn.
 # Voeg ook all geldige groepen toe aan het account van de nieuwe gebruiker.
-Foreach ($group in $ExampleUserGroups) {
-    Add-ADGroupMember -Identity $group -Members $SamAccount
+Try {
+    Foreach ($group in $ExampleUserGroups) {
+        Add-ADGroupMember -Identity $group -Members $SamAccount
+    }
+} Catch {
+    # Automatic variabele van powershell.
+    # $Error
 }
+
 
 # Maakt de Exchange online mailbox aan in de productieomgeving.
 # Deze stap wordt overgeslagen als er een account in de testomgeving wordt aangemaakt.
-if ($TestOmgeving -eq 'False') {
-    'Momentje geduld, de Exchange Management Shell snap-in wordt geladen.'
+if ($TestOmgeving -eq 0) {
+    ''
+    'Momentje geduld, de Exchange Management Shell snap-in wordt nu geladen.'
+    # Add-PSsnapin Microsoft.Exchange.Management.PowerShell.E2010
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@MYDOMAINweb.mail.onmicrosoft.com"
+    # Maak de mailbox aan voor de nieuwe gebruiker.
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@stadgenootweb.mail.onmicrosoft.com"
+
+    # Ververs de federation server zodat SSO goed werkt.
     Invoke-Command -ComputerName $FederationServer -ScriptBlock {Start-ADSyncSyncCycle -PolicyType Delta}
 }
 
-Set-QADUser -identity $SamAccount -ObjectAttributes @{mailnickname = $SamAccount}
-
-# Wellicht dat de output naar de eingebruiker wat beter kan?
 ''
-'Er is een nieuw accout aangemaakt voor medewerker: ' + $NewUser
+''
+'Er is een nieuw accout aangemaakt voor ' + $NewUser
 'Het e-mail adress van de medewerker is: ' + $upn
 ''
-'Check in Active directory of het account goed is aangemaakt.'
-'Log in op het account om de calender sharing in te te stellen.'
+''
+'Check in Active directory of het account goed is aangemaakt!'
+'Log in op het account van de gebruiker om de calender sharing in te te stellen.'
+''
 'Vergeet daarna niet het vinkje aan te zetten dat de gebruiker het wachtwoord MOET wijzigen.'
