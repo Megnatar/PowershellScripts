@@ -15,7 +15,7 @@ $FederationServer = 'Some Federation Server name'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
-$Domain = If ($TestOmgeving) {"@stadgenoottest.nl"} Else {"@stadgenoot.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
+$Domain = If ($TestOmgeving) {"@sometst.nl"} Else {"@somedomain.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
 $ExpirationTime = '00:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
 $ProfilePath = '\\connect.local\SOMECOMPANYNAME\users\'                                      # Path naar alle gebruikers profielen (RUPs), en is zonder de UPN naam.
