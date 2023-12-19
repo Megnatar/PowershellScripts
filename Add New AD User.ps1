@@ -38,7 +38,7 @@ While (!$NewUser) {                                                 # Zolang de 
     $NewUser = Read-Host 'Naam van de medewerker'
 
     # Ik had verwacht dat als de hele statement in de while loop false was. De body van de loop niet wordt uitgevoerd.
-    # lijkt toch anders te zijn met en tweede definitie zoals: while(!$NewUser -and $NewUser.lenght -lt 5)
+    # lijkt toch anders te zijn met een tweede definitie zoals: while(!$NewUser -and $NewUser.lenght -lt 5)
     #
     # Daarom:
     # Als er minder dan 5 karakers in de naam zitten, If op deze plek om $NewUser leeg te maken.
