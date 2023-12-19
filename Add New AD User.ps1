@@ -205,7 +205,7 @@ if ($TestOmgeving -eq 0) {
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
     # Maak de mailbox aan voor de nieuwe gebruiker.
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@stadgenootweb.mail.onmicrosoft.com"
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@SomeDomainweb.mail.onmicrosoft.com"
 
     # Ververs de federation server zodat SSO goed werkt.
     Invoke-Command -ComputerName $FederationServer -ScriptBlock {Start-ADSyncSyncCycle -PolicyType Delta}
