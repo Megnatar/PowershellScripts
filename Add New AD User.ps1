@@ -26,6 +26,7 @@ $Today = get-Date -Format 'yy-MM-dd'                                            
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
                    "Domain user", `
+                   "Some group name", `
                    )
 
 # Vraag naar de volledige naam van de nieuwe gebruiker/medewerker.
