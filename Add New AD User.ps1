@@ -76,7 +76,6 @@ if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
         $int = '0' + $int 
         $SamAccount = $SamAccount.Replace($SamAccount.Substring(4, 2), $int)
     }
-
 } else {
     # Alle accounts vanaf 10 tot en met 99
     $int = [int]$SamAccount.Substring(4, 2) + 1
