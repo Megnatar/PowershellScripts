@@ -192,19 +192,10 @@ New-ADUser `
     -HomeDrive $HomeDrive `
     -Path $OrganizationalUnit
 
-
-# Error handeling.
-# Onderdruk errors voor als groepen e.d niet meer bestaan (wel in de array zitten) of ongeldig zijn.
 # Voeg ook all geldige groepen toe aan het account van de nieuwe gebruiker.
-Try {
-    Foreach ($group in $ExampleUserGroups) {
-        Add-ADGroupMember -Identity $group -Members $SamAccount
-    }
-} Catch {
-    # Automatic variabele van powershell.
-    # $Error
+Foreach ($group in $ExampleUserGroups) {
+    Add-ADGroupMember -Identity $group -Members $SamAccount
 }
-
 
 # Maakt de Exchange online mailbox aan in de productieomgeving.
 # Deze stap wordt overgeslagen als er een account in de testomgeving wordt aangemaakt.
