@@ -3,6 +3,7 @@
     AddAdUser Versie 1.0
 
     Gecodeerd door Jos Severijnse.
+    
     Dit is mijn eerste powershell script ooit en het is binnen 1 week geschreven!
     Dit script is voor mijn huidige werkgever geschreven en is volledig in mijn vrije tijd gecodeerd.
     Alle bedrijfs gevoelige informatie is verwijderd van deze versie van het script!
