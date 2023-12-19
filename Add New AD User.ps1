@@ -35,7 +35,7 @@ $GroupToRemove = @(
 While (!$NewUser) {                                                 # Zolang de variabele $Newuser leeg is.
     $NewUser = Read-Host 'Naam van de medewerker'
 
-    # Ik had verwacht dat als de hele statement in de while loop false was. De body van de loop niet wordt uitgevoer.
+    # Ik had verwacht dat als de hele statement in de while loop false was. De body van de loop niet wordt uitgevoerd.
     # lijkt toch anders te zijn met en tweede definitie zoals: while(!$NewUser -and $NewUser.lenght -lt 5)
     #
     # Daarom:
