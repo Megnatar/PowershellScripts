@@ -3,7 +3,7 @@
     AddAdUser Versie 1.0
 
     Gecodeerd door Jos Severijnse.
-    Dit is mijn eerste powershell script ooit!
+    Dit is mijn eerste powershell script ooit en het is binnen 1 week geschreven!
 #>
 # Leeg het scherm voor nieuw console script.
 cls
