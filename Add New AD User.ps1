@@ -25,7 +25,7 @@ $Today = get-Date -Format 'yy-MM-dd'                                            
 # Array met ongeldige groepen. Ongeldige groepen zijn groepen die appart moeten worden aangevraagd of niet meer van toepassing zijn.
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
-                   "SomeGroupName", `
+                   "Domain user", `
                    )
 
 # Vraag naar de volledige naam van de nieuwe gebruiker/medewerker.
