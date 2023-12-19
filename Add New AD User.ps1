@@ -18,7 +18,7 @@ $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Q
 $Domain = If ($TestOmgeving) {"@sometst.nl"} Else {"@somedomain.nl"}                    # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
 $ExpirationTime = '00:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
-$ProfilePath = '\\Some.Domain\SOMECOMPANYNAME\users\'                                 # Path naar alle gebruikers profielen (RUPs), en is zonder de UPN naam.
+$ProfilePath = '\\Some.Domain\SOMECOMPANYNAME\users\'                                   # Path naar alle gebruikers profielen (RUPs), en is zonder de UPN naam.
 $HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
 $Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
 
