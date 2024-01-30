@@ -63,8 +63,7 @@ If ($UpnExist) {
     # Stop de naam en het opvolgnummer in apparte varabele
     $UpnUser = $UpnExist.Substring(0, $UpnExist.IndexOf('@'))
     $UpnNumber = $UpnUser[-1]
-
-
+    
     # Als er al een tweede upn bestaat
     If ($UpnNumber -eq 2 ) {
         $Upn = $UpnUser + ([int]$UpnNumber + 1) + $Domain
@@ -110,7 +109,6 @@ if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
 
 # Het Sam account is pas vanaf hier bepaald, dus daarom kan nu de var voor het profilepad gemaakt worden.
 $ProfilePath = $ProfilePath + $SamAccount
-
 
 # Vraag de voor + achternaam van het voorbeeld account op.
 ''
