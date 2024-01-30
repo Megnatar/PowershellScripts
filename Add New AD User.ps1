@@ -55,7 +55,7 @@ $Account = (($Name[0] + $Name[1] + $Surname[0] + $Surname[1]).tolower() + "*")
 
 
 # Als het e-mail adress van de nieuwe user al bestaat. Dus er was al een Jan Jansen en nu wordt er een Jaap Jansen gemaakt.
-# Plak hier dan een 2 achter de naam, dus: JJansen01@stadgenoot.nl
+# Plak hier dan een 2 achter de naam, dus: JJansen01@SomeDomaint.nl
 If ($UpnExist) {
    $Upn = $Name[0] + $FullSurname.replace(' ', '') + '2' + $Domain 
 }
@@ -230,7 +230,7 @@ if ($TestOmgeving -eq 0) {
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
     # Maak de mailbox aan voor de nieuwe gebruiker.
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@stadgenootweb.mail.onmicrosoft.com"
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@SomeDomaintweb.mail.onmicrosoft.com"
 
     # start-sleep -Seconds 10
     ''
