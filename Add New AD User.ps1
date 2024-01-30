@@ -228,7 +228,7 @@ New-ADUser `
 
 # Maakt de user owner van zijn/haar homefolder
 $Acl = Get-Acl $ProfilePath.FullName
-$Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$SamAccount")
+$Acl.SetOwner([System.Security.Principal.NTAccount]"SomeDomain\$SamAccount")
 Set-Acl $ProfilePath.FullName $Acl -Verbose
 
 # Voeg de groepslidmaatschappen toe aan het account.
@@ -245,7 +245,7 @@ if ($TestOmgeving -eq 0) {
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
     # Maak de mailbox aan voor de nieuwe gebruiker.
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@stadgenootweb.mail.onmicrosoft.com"
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@SomeDomainweb.mail.onmicrosoft.com"
 
     # start-sleep -Seconds 10
     ''
