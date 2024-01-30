@@ -3,32 +3,30 @@
     AddAdUser Versie 1.0
 
     Gecodeerd door Jos Severijnse.
-    
-    Dit is mijn eerste powershell script ooit en het is binnen 1 week geschreven!
-    Dit script is voor mijn huidige werkgever geschreven en is volledig in mijn vrijetijd gecodeerd.
-    Alle bedrijfsgevoelige informatie is verwijderd van deze versie van het script!
+    Co auteur, Michiel Vreeken, Thanks voor de hulp hier en daar!
+
 #>
 # Leeg het scherm voor nieuw console script.
 cls
 
 # Dit script is afhankelijk van deze onpremisse servers.
-$ServerExists = 'SomeServerOnlyInTEST'
-$FederationServer = 'Some Federation Server name'
+$ServerExists = 'CTXRESAM01'
+$FederationServer = 'ADFS03'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
-$Domain = If ($TestOmgeving) {"@sometst.nl"} Else {"@somedomain.nl"}                    # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
+$Domain = If ($TestOmgeving) {"@stadgenoottest.nl"} Else {"@stadgenoot.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
-$ExpirationTime = '00:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
-$ProfilePath = '\\Some.Domain\SOMECOMPANYNAME\users\'                                   # Path naar een netwerk locatie waar alle gebruikers profielen (RUPs) staan, en is zonder de UPN naam.
-$HomeDrive = 'X'                                                                        # De drive (mapping) waar alle profielen op staan.
+$ExpirationTime = '23:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
+$ProfilePath = '\\connect.local\Stadgenoot\users\'                                      # Path naar alle gebruikers profielen (RUPs)
+$HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
 $Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
+$SleepPeriod = 10
 
 # Array met ongeldige groepen. Ongeldige groepen zijn groepen die appart moeten worden aangevraagd of niet meer van toepassing zijn.
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
-                   "Domain user", `
-                   "Some group name", `
+                   "Domain Users"
                    )
 
 # Vraag naar de volledige naam van de nieuwe gebruiker/medewerker.
@@ -37,8 +35,8 @@ $GroupToRemove = @(
 While (!$NewUser) {                                                 # Zolang de variabele $Newuser leeg is.
     $NewUser = Read-Host 'Naam van de medewerker'
 
-    # Ik had verwacht dat als de hele statement in de while loop false was. De body van de loop niet wordt uitgevoerd.
-    # lijkt toch anders te zijn met een tweede definitie zoals: while(!$NewUser -and $NewUser.lenght -lt 5)
+    # Ik had verwacht dat als de hele statement in de while loop false was. De body van de loop niet wordt uitgevoer.
+    # lijkt toch anders te zijn met en tweede definitie zoals: while(!$NewUser -and $NewUser.lenght -lt 5)
     #
     # Daarom:
     # Als er minder dan 5 karakers in de naam zitten, If op deze plek om $NewUser leeg te maken.
@@ -52,7 +50,15 @@ $Name = $NewUser.Substring(0, $NewUser.IndexOf(" "))
 $FullSurname = $NewUser.Substring($NewUser.IndexOf(" ")+1)
 $Surname = $FullSurname.split()[-1]
 $Upn = $Name[0] + $FullSurname.replace(' ', '') + $Domain
+$UpnExist = Get-ADUser -filter {UserPrincipalName -like $Upn}
 $Account = (($Name[0] + $Name[1] + $Surname[0] + $Surname[1]).tolower() + "*")
+
+
+# Als het e-mail adress van de nieuwe user al bestaat. Dus er was al een Jan Jansen en nu wordt er een Jaap Jansen gemaakt.
+# Plak hier dan een 2 achter de naam, dus: JJansen01@stadgenoot.nl
+If ($UpnExist) {
+   $Upn = $Name[0] + $FullSurname.replace(' ', '') + '2' + $Domain 
+}
 
 # Haal de namen van alle vergelijkbare SAM accounts op en sorteer de lijst van boven naar beneden.
 $SamAccount = (Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object SamAccountName -Descending | Select SamAccountName -First 1).SamAccountName
@@ -80,6 +86,7 @@ if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
         $int = '0' + $int 
         $SamAccount = $SamAccount.Replace($SamAccount.Substring(4, 2), $int)
     }
+
 } else {
     # Alle accounts vanaf 10 tot en met 99
     $int = [int]$SamAccount.Substring(4, 2) + 1
@@ -88,6 +95,7 @@ if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
 
 # Het Sam account is pas vanaf hier bepaald, dus daarom kan nu de var voor het profilepad gemaakt worden.
 $ProfilePath = $ProfilePath + $SamAccount
+
 
 # Vraag de voor + achternaam van het voorbeeld account op.
 ''
@@ -111,6 +119,14 @@ $Company = (Get-ADUser -identity $ExampleLSam -Properties * | select Company).Co
 
 # In welk OU moet het account worden aangemaakt.
 $OrganizationalUnit = ((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).Substring(((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).IndexOf(',')+1)
+
+if ($OrganizationalUnit.Contains("Disabled Accounts")) {
+$OrganizationalUnit
+    ''
+    "Deze persoon $ExampleUser is inmiddels uit dienst."
+    'Geef een ander voorbeeld account op.'
+    exit
+}
 
 # Haal alle groepslidmaatschappen van het voorbeeld account op.
 $ExampleUserGroups = (Get-ADPrincipalGroupMembership $ExampleLSam | select name).name
@@ -145,6 +161,7 @@ While (!$ExpirationDate) {
         $Day = $Date.Substring(6, 2)
 
         $ExpirationDate = $Day + '-' + $Mounth + '-' + $Year
+        $ExpirationDate = (Get-Date (([datetime]::ParseExact($ExpirationDate, 'dd-MM-yy', $null)).AddDays(1)) -format "dd-MM-yy")
 
     # Als de datum niet goed is ingevuld. Display massage and return to while.
     # En leeg de variabele $Date voor hergebruik.
@@ -194,7 +211,12 @@ New-ADUser `
     -HomeDrive $HomeDrive `
     -Path $OrganizationalUnit
 
-# Voeg ook all geldige groepen toe aan het account van de nieuwe gebruiker.
+# Maakt de user owner van zijn/haar homefolder
+$Acl = Get-Acl $ProfilePath.FullName
+$Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$SamAccount")
+Set-Acl $ProfilePath.FullName $Acl -Verbose
+
+# Voeg de groepslidmaatschappen toe aan het account.
 Foreach ($group in $ExampleUserGroups) {
     Add-ADGroupMember -Identity $group -Members $SamAccount
 }
@@ -208,7 +230,12 @@ if ($TestOmgeving -eq 0) {
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
     # Maak de mailbox aan voor de nieuwe gebruiker.
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@SomeDomainweb.mail.onmicrosoft.com"
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@stadgenootweb.mail.onmicrosoft.com"
+
+    # start-sleep -Seconds 10
+    ''
+    "Even 10 seconden wachten voordat wij AD kunnen synchroniseren"
+    sleep $SleepPeriod
 
     # Ververs de federation server zodat SSO goed werkt.
     Invoke-Command -ComputerName $FederationServer -ScriptBlock {Start-ADSyncSyncCycle -PolicyType Delta}
