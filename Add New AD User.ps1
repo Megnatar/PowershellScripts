@@ -10,15 +10,15 @@
 cls
 
 # Dit script is afhankelijk van deze onpremisse servers.
-$ServerExists = 'SomeServer'
+$ServerExists = 'SomeServerInTest'
 $FederationServer = 'SomeFederationServer'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
-$Domain = If ($TestOmgeving) {"@tDomainTest.nl"} Else {"@Domain.nl"}                    # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
+$Domain = If ($TestOmgeving) {"@SomeTestDomain.nl"} Else {"@SomeDomain.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
 $ExpirationTime = '23:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
-$ProfilePath = '\\Some.Path\To\users\'                                                  # Path naar alle gebruikers profielen (RUPs)
+$ProfilePath = '\\Domain\share\users\'                                      # Path naar alle gebruikers profielen (RUPs)
 $HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
 $Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
 $SleepPeriod = 10
@@ -50,14 +50,29 @@ $Name = $NewUser.Substring(0, $NewUser.IndexOf(" "))
 $FullSurname = $NewUser.Substring($NewUser.IndexOf(" ")+1)
 $Surname = $FullSurname.split()[-1]
 $Upn = $Name[0] + $FullSurname.replace(' ', '') + $Domain
-$UpnExist = Get-ADUser -filter {UserPrincipalName -like $Upn}
 $Account = (($Name[0] + $Name[1] + $Surname[0] + $Surname[1]).tolower() + "*")
 
+# Is er al een UserPrincipalName net deze naam?
+# En als dat zo is dan heeft de variabele $UpnExist een waarde.
+$UpnExist = Get-ADUser -filter {UserPrincipalName -like $Upn}
 
 # Als het e-mail adress van de nieuwe user al bestaat. Dus er was al een Jan Jansen en nu wordt er een Jaap Jansen gemaakt.
-# Plak hier dan een 2 achter de naam, dus: JJansen01@SomeDomaint.nl
+# Plak hier dan een 2 achter de naam, dus: JJansen2@stadgenoot.nl
 If ($UpnExist) {
-   $Upn = $Name[0] + $FullSurname.replace(' ', '') + '2' + $Domain 
+
+    # Stop de naam en het opvolgnummer in apparte varabele
+    $UpnUser = $UpnExist.Substring(0, $UpnExist.IndexOf('@'))
+    $UpnNumber = $UpnUser[-1]
+
+
+    # Als er al een tweede upn bestaat
+    If ($UpnNumber -eq 2 ) {
+        $Upn = $UpnUser + ([int]$UpnNumber + 1) + $Domain
+
+    # Waneer er nog geen tweede upn bestaat
+    } else {
+        $Upn = $Name[0] + $FullSurname.replace(' ', '') + '2' + $Domain
+    }
 }
 
 # Haal de namen van alle vergelijkbare SAM accounts op en sorteer de lijst van boven naar beneden.
@@ -213,7 +228,7 @@ New-ADUser `
 
 # Maakt de user owner van zijn/haar homefolder
 $Acl = Get-Acl $ProfilePath.FullName
-$Acl.SetOwner([System.Security.Principal.NTAccount]"DomainName\$SamAccount")
+$Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$SamAccount")
 Set-Acl $ProfilePath.FullName $Acl -Verbose
 
 # Voeg de groepslidmaatschappen toe aan het account.
@@ -230,7 +245,7 @@ if ($TestOmgeving -eq 0) {
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
     # Maak de mailbox aan voor de nieuwe gebruiker.
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@SomeDomainweb.mail.onmicrosoft.com"
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@stadgenootweb.mail.onmicrosoft.com"
 
     # start-sleep -Seconds 10
     ''
