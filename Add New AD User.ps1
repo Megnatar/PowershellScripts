@@ -10,15 +10,15 @@
 cls
 
 # Dit script is afhankelijk van deze onpremisse servers.
-$ServerExists = 'CTXRESAM01'
-$FederationServer = 'ADFS03'
+$ServerExists = 'SomeServer'
+$FederationServer = 'SomeFederationServer'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
 $Domain = If ($TestOmgeving) {"@stadgenoottest.nl"} Else {"@stadgenoot.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
 $ExpirationTime = '23:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
-$ProfilePath = '\\connect.local\Stadgenoot\users\'                                      # Path naar alle gebruikers profielen (RUPs)
+$ProfilePath = '\\Some.Path\To\users\'                                      # Path naar alle gebruikers profielen (RUPs)
 $HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
 $Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
 $SleepPeriod = 10
@@ -213,7 +213,7 @@ New-ADUser `
 
 # Maakt de user owner van zijn/haar homefolder
 $Acl = Get-Acl $ProfilePath.FullName
-$Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$SamAccount")
+$Acl.SetOwner([System.Security.Principal.NTAccount]"DomainName\$SamAccount")
 Set-Acl $ProfilePath.FullName $Acl -Verbose
 
 # Voeg de groepslidmaatschappen toe aan het account.
