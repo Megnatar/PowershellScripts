@@ -2,9 +2,7 @@
     Script om een nieuwe user in AD toe te voegen.
     AddAdUser Versie 1.0
 
-    Gecodeerd door Jos Severijnse.
-    Co auteur, Michiel Vreeken, Thanks voor de hulp hier en daar!
-
+    Gecodeerd door Jos Severijnse
 #>
 # Leeg het scherm voor nieuw console script.
 cls
