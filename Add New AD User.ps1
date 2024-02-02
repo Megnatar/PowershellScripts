@@ -2,21 +2,23 @@
     Script om een nieuwe user in AD toe te voegen.
     AddAdUser Versie 1.0
 
-    Gecodeerd door Jos Severijnse
+    Gecodeerd door Jos Severijnse.
+    
+
 #>
 # Leeg het scherm voor nieuw console script.
 cls
 
 # Dit script is afhankelijk van deze onpremisse servers.
-$ServerExists = 'SomeServerInTest'
+$ServerExists = 'SomeServer'
 $FederationServer = 'SomeFederationServer'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
-$Domain = If ($TestOmgeving) {"@SomeTestDomain.nl"} Else {"@SomeDomain.nl"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
+$Domain = If ($TestOmgeving) {"@TestSomeDomain.org"} Else {"@SomeDomain.org"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
 $ExpirationTime = '23:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
-$ProfilePath = '\\Domain\share\users\'                                                  # Path naar alle gebruikers profielen (RUPs)
+$ProfilePath = '\\Domain.local\Company\users\'                                      # Path naar alle gebruikers profielen (RUPs)
 $HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
 $Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
 $SleepPeriod = 10
@@ -24,6 +26,34 @@ $SleepPeriod = 10
 # Array met ongeldige groepen. Ongeldige groepen zijn groepen die appart moeten worden aangevraagd of niet meer van toepassing zijn.
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
+                   "BedrijfsHulpVerlening", `
+                   "Calamiteitenteam", `
+                   "JongeStadgenoten", `
+                   "Sec_Citrix_VDI_PowerUser", `
+                   "Sec_Citrix_VDI_Keyboard", `
+                   "Sec_SharePointOnline_ITs2020_Leden", `
+                   "Sec_Citrix_Testomgeving_KeyUsers", `
+                   "Sec_Jong Company ", `
+                   "Sec_MBX_Jong_Company ", `
+                   "Sec_EM_Laptops_GG", `
+                   "Sec_MobileIron_GG", `
+                   "Sec_MobileIron_Acronis_GG", `
+                   "Sec_MobileIron_Acronis_Android_GG", `
+                   "Sec_Microsoft365_Defender_licentie", `
+                   "Sec_Microsoft365_PowerBI_Premium_licentie", `
+                   "Sec_Microsoft365_Project_licentie", `
+                   "Sec_Microsoft365_Visio_licentie", `
+                   "Sec_Microsoft365_MyOfficeDays", `
+                   "Sec_Citrix_Testomgeving_Tobias FU update", `
+                   "Sec_OR", `
+                   "Vry~CtrlWORK^", `
+                   "Vry~Defender365^", `
+                   "Vry~IrFanView^", `
+                   "Vry~NitroPDF^", `
+                   "Vry~Power_BI_Premium^", `
+                   "Vry~Project365^", `
+                   "Vry~Visio365^", `
+                   "Vry~Data_VO^", `
                    "Domain Users"
                    )
 
@@ -50,23 +80,21 @@ $Surname = $FullSurname.split()[-1]
 $Upn = $Name[0] + $FullSurname.replace(' ', '') + $Domain
 $Account = (($Name[0] + $Name[1] + $Surname[0] + $Surname[1]).tolower() + "*")
 
-# Is er al een UserPrincipalName net deze naam?
-# En als dat zo is dan heeft de variabele $UpnExist een waarde.
+# Is er al een UserPrincipalName met deze naam is?
+# En als dat zo is, dan heeft de variabele $UpnExist een waarde.
 $UpnExist = Get-ADUser -filter {UserPrincipalName -like $Upn}
 
-# Als het e-mail adress van de nieuwe user al bestaat. Dus er was al een Jan Jansen en nu wordt er een Jaap Jansen gemaakt.
-# Plak hier dan een 2 achter de naam, dus: JJansen2@stadgenoot.nl
+# Als het e-mail adress van de nieuwe user al bestaat. Dus er was al een Jan Jansen (jaja)en nu wordt er een Jaap Jansen (jaja) gemaakt.
+# Plak hier dan een 2 of een opvolgnummer achter de naam van het account.
 If ($UpnExist) {
 
-    # Stop de naam en het opvolgnummer in apparte varabele
+    # Stop de naam (eerste letter voornaam plus achternaam) en het opvolgnummer in apparte varabele
     $UpnUser = $UpnExist.Substring(0, $UpnExist.IndexOf('@'))
     $UpnNumber = $UpnUser[-1]
-    
-    # Als er al een tweede upn bestaat
-    If ($UpnNumber -eq 2 ) {
-        $Upn = $UpnUser + ([int]$UpnNumber + 1) + $Domain
 
-    # Waneer er nog geen tweede upn bestaat
+    # Als functie IsNuber True is, dan bestond er al een tweede account met vergelijkbare upn
+    if (IsNumber $UpnNumber) {
+        $Upn = $Name[0] + $FullSurname.replace(' ', '') + ([int]::Parse($UpnNumber) + 1) + $Domain
     } else {
         $Upn = $Name[0] + $FullSurname.replace(' ', '') + '2' + $Domain
     }
@@ -77,6 +105,7 @@ $SamAccount = (Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object 
 
 # Als de variabele SAMAccount leeg is, dan bestond het account nog helemaal niet. Defineer de nieuwe user hier.
 if (!$SamAccount) {
+
     $SamAccount = $Account.Replace('*', '01')
     $NewAccount = 1
 }
@@ -85,6 +114,7 @@ if (!$SamAccount) {
 # Dit kan een bug veroozaken als er meer dan 999 SAM accounts zijn voor een gewone user!
 # maar ik betwijldat dat dit ooit zal gebeuren....
 If ($SamAccount.Substring(4, 2) -eq '99') {
+
     $SamAccount = ((Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object SamAccountName -Descending | Select SamAccountName -First 2).SamAccountName)[1]
 }
 
@@ -94,12 +124,14 @@ if ([int]$SamAccount.Substring(4, 2) + 1 -lt '10') {
     # Negeer een nieuw 01 account. Maakt alle SAM account namen van 02 tot en met 09 aan.
     # Misschien dat de !$NewAccount ook in de defenitie van de eerte if gezet kan worden. Zoiets als -and !$NewAccount.
     if (!$NewAccount) {
+
         $int =  [int]$SamAccount.Substring(4, 2) + 1
         $int = '0' + $int 
         $SamAccount = $SamAccount.Replace($SamAccount.Substring(4, 2), $int)
     }
 
 } else {
+
     # Alle accounts vanaf 10 tot en met 99
     $int = [int]$SamAccount.Substring(4, 2) + 1
     $SamAccount = $SamAccount.Replace($SamAccount.Substring(4, 2), $int)
@@ -112,6 +144,7 @@ $ProfilePath = $ProfilePath + $SamAccount
 ''
 'Geef de volledige naam, van de voorbeeld gebruiker op!'
 While (!$ExampleUser) {
+
     $ExampleUser = Read-Host 'Naam van het voorbeeld'
 
     if ($ExampleUser.Length -lt 5) {
@@ -132,7 +165,8 @@ $Company = (Get-ADUser -identity $ExampleLSam -Properties * | select Company).Co
 $OrganizationalUnit = ((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).Substring(((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).IndexOf(',')+1)
 
 if ($OrganizationalUnit.Contains("Disabled Accounts")) {
-$OrganizationalUnit
+
+    $OrganizationalUnit
     ''
     "Deze persoon $ExampleUser is inmiddels uit dienst."
     'Geef een ander voorbeeld account op.'
@@ -144,6 +178,7 @@ $ExampleUserGroups = (Get-ADPrincipalGroupMembership $ExampleLSam | select name)
 
 # Verwijder alle onnodige groepen van het account.
 Foreach ($group in $ExampleUserGroups) {
+
     if ($GroupToRemove.Contains($group)) {
 
         # Wel een vreemde manier om waardes uit een array te halen. Ik ben pop of remove at (index) o.i.d gewend.
@@ -161,6 +196,7 @@ Foreach ($group in $ExampleUserGroups) {
 
 # Zolang de verloopdatum leeg is of niet good is ingevulde. RETURN
 While (!$ExpirationDate) {
+
     $Date = Read-Host 'Verloopdatum van het account'
 
     # Simpele conditie om te checken of de datum goed is ingevuld.
@@ -194,6 +230,7 @@ $AccountExpirationDate = $ExpirationDate + ' ' + $ExpirationTime
 ''
 'Geef het nummer van de Topdeskmelding op.'
 While (!$ChangeNumber) {
+
     $ChangeNumber = Read-Host 'Nummer van de melding is'
     # ToDo, nog een check inbouwen of het nummer begint met WA?
 }
@@ -222,15 +259,15 @@ New-ADUser `
     -HomeDrive $HomeDrive `
     -Path $OrganizationalUnit
 
-# Maakt de user owner van zijn/haar homefolder
-$Acl = Get-Acl $ProfilePath.FullName
-$Acl.SetOwner([System.Security.Principal.NTAccount]"SomeDomain\$SamAccount")
-Set-Acl $ProfilePath.FullName $Acl -Verbose
-
 # Voeg de groepslidmaatschappen toe aan het account.
 Foreach ($group in $ExampleUserGroups) {
     Add-ADGroupMember -Identity $group -Members $SamAccount
 }
+
+# Maakt de user owner van zijn/haar homefolder.
+$Acl = Get-Acl $ProfilePath.FullName
+$Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$SamAccount")
+Set-Acl $ProfilePath.FullName $Acl -Verbose
 
 # Maakt de Exchange online mailbox aan in de productieomgeving.
 # Deze stap wordt overgeslagen als er een account in de testomgeving wordt aangemaakt.
@@ -241,7 +278,7 @@ if ($TestOmgeving -eq 0) {
     Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 
     # Maak de mailbox aan voor de nieuwe gebruiker.
-    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@SomeDomainweb.mail.onmicrosoft.com"
+    Enable-RemoteMailbox -Identity $SamAccount -RemoteRoutingAddress "$SamAccount@Company web.mail.onmicrosoft.com"
 
     # start-sleep -Seconds 10
     ''
@@ -262,3 +299,8 @@ if ($TestOmgeving -eq 0) {
 'Log in op het account van de gebruiker om de calender sharing in te te stellen.'
 ''
 'Vergeet daarna niet het vinkje aan te zetten dat de gebruiker het wachtwoord MOET wijzigen.'
+
+# Functie om te kijken of een variabele een string of een integer is.
+function IsNumber ($Value) {
+    return $value -match "^[\d\.]+$"
+}
