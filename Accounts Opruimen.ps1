@@ -17,8 +17,8 @@
 
 # Globale Variabelen.
 $AdminGroup = "DOMAIN\'Domain admins's"
-$OuTussenfase = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
-$OuThisYear = "OU=_Disabled Accounts 2024,OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
+$OuTussenfase = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
+$OuThisYear = "OU=_Disabled Accounts 2024,OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
 $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
 
