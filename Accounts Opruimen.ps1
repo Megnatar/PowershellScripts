@@ -16,7 +16,7 @@
 #>
 
 # Globale Variabelen.
-$AdminGroup = "CONNECT\'Domain admins's"
+$AdminGroup = "DOMAIN\'Domain admins's"
 $OuTussenfase = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
 $OuThisYear = "OU=_Disabled Accounts 2024,OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
 $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
