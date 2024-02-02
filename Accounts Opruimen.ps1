@@ -17,13 +17,13 @@
 
 # Globale Variabelen.
 $AdminGroup = "DOMAIN\'Domain admins's"
-$OuTussenfase = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
-$OuThisYear = "OU=_Disabled Accounts 2024,OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
+$OuWaitOneMonth = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
+$OuThisYear = "OU=Disabled Accounts,OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
 $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
 
 # Gebruikers ophalen uit de OU en loop door alle gevonden accounts.
-Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, mailNickName, Description | % {
+Get-ADUser -SearchBase $OuWaitOneMonth  -filter * -Properties HomeDirectory, mailNickName, Description | % {
 
     # Variabelen met betrekking tot het huidige account in de loop.
     $Homedir = $_.HomeDirectory
