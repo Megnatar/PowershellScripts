@@ -98,11 +98,11 @@ Get-ADUser -SearchBase $OuWaitOneMonth  -filter * -Properties HomeDirectory, mai
     }
 }
 
-# e-mail opmaak naar IctInfo@Stadgenoot.nl met een lijst van de wijzigingen.
+# e-mail opmaak naar IctInfo@SomeDomain.org met een lijst van de wijzigingen.
 $Email = @{
     From = "SomeServer@SomeDomain.org"
     To = "Support@SomeDomain.org"
-    SmtpServer = "smtp.someDomain.org"
+    SmtpServer = "smtp.SomeDomain.org"
     Subject = "Accounts die opgeruimd zijn"
     Body = [string]$MessageBody
 }
