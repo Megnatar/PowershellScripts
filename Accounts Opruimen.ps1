@@ -16,7 +16,7 @@
 #>
 
 # Globale Variabelen.
-$AdminGroup = "DOMAIN\'Domain admins's"
+$AdminGroup = "DOMAIN\'Domain admins"
 $OuWaitOneMonth = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
 $OuThisYear = "OU=Disabled Accounts,OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
 $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
