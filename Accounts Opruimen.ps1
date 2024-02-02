@@ -98,7 +98,7 @@ Get-ADUser -SearchBase $OuWaitOneMonth  -filter * -Properties HomeDirectory, mai
     }
 }
 
-# e-mail opmaak naar IctInfo@SomeDomain.org met een lijst van de wijzigingen.
+# e-mail opmaak naar Support@SomeDomain.org met een lijst van de wijzigingen.
 $Email = @{
     From = "SomeServer@SomeDomain.org"
     To = "Support@SomeDomain.org"
