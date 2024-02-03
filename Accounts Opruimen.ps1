@@ -103,7 +103,7 @@ $Email = @{
     From = "SomeServer@SomeDomain.org"
     To = "Support@SomeDomain.org"
     SmtpServer = "smtp.SomeDomain.org"
-    Subject = "Accounts die opgeruimd zijn"
+    Subject = "Disabled Accounts and removed home folders."
     Body = [string]$MessageBody
 }
 
