@@ -19,7 +19,7 @@
 $AdminGroup = "DOMAIN\'Domain admins"
 $OuWaitOneMonth = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
 $OuThisYear = "OU=Disabled Accounts,OU=Disabled Accounts,OU=Business,DC=Domain,DC=SubDomain"
-$MessageBody = @("Disabeled accounts and delteted home folders`n___________________________________________________`n`n")
+$MessageBody = @("Disabeled accounts and deleted home folders`n___________________________________________________`n`n")
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
 
 # Gebruikers ophalen uit de OU en loop door alle gevonden accounts.
@@ -103,7 +103,7 @@ $Email = @{
     From = "SomeServer@SomeDomain.org"
     To = "Support@SomeDomain.org"
     SmtpServer = "smtp.SomeDomain.org"
-    Subject = "Disabled Accounts and removed home folders."
+    Subject = "Disabled Accounts and deleted home folders."
     Body = [string]$MessageBody
 }
 
