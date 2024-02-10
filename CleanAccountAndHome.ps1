@@ -24,7 +24,7 @@ $OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=SomeOU,DC=Som
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
 $MessageBodySend = $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
 
-# Gebruikers ophalen uit de OU, en 'loop' door alle gevonden accounts.
+# Gebruikers ophalen uit de OU OuMaandWachten, en 'loop' door alle gevonden accounts.
 # Maar omdat een bepaald sleutelwoord meerdere properties kan ophalen, moet dat nog even getest worden.
 Get-ADUser -SearchBase $OuMaandWachten  -filter * -Properties HomeDirectory, Description | % {
 
