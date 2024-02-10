@@ -18,7 +18,7 @@
 
 # Globale Variabelen.
 $AdminGroup = "CONNECT\'Domain admins"
-$OuMaandWachten = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
+$OuMaandWachten = "OU=MaandWachten, OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
 $Year = 2024
 $OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
