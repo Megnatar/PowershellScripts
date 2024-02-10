@@ -8,7 +8,7 @@
     Het maakt de 'Domain admins' groep eigenaar van de home folder en gooit hem daarna weg, als deze bestaat.
     Alle groepslidmaatschappen van de gebruiker worden verwijderd door het script, behalve de Domain users groep.
     Bij het verwijderen wordt ook de Office365 licentie verwijderd, daarmee wordt ook de mailbox van de gebruiker weggegooid.
-    Vervolgens wordt het account uit de tussenfase OU gehaald en in de _Disabled Accounts OU geplaatst, van het huidige jaar.
+    Vervolgens wordt het account uit de MaandWachten OU gehaald en in de _Disabled Accounts OU geplaatst, van het huidige jaar.
     
     Er wordt als laatst een e-mail verzonden naar SomeEmail@SomeDomain.org met alle aanpassingen.
     Als er geen aanpassingen zijn, dan wordt er geen mail verzonden.
@@ -18,7 +18,7 @@
 
 # Globale Variabelen.
 $AdminGroup = "CONNECT\'Domain admins"
-$OuTussenfase = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
+$OuMaandWachten = "OU=OneMothPause, OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
 $Year = 2024
 $OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=Business,DC=Domain,DC=local"
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
@@ -90,7 +90,7 @@ Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, mailN
                 Remove-ADGroupMember -Identity $group -Members $SamAccountname -Confirm:$false
             }
         }
-        # Haal de user uit tussenfase en verplaats hem naar de OU voor accounts van users uit dienst.
+        # Haal de user uit MaandWachten en verplaats hem naar de OU voor accounts van users uit dienst.
         get-aduser -identity $SamAccountname | Move-ADObject -TargetPath $OuThisYear 
 
         # Hou bij welke accounts en home folders er worden opgeschoond.
