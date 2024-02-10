@@ -18,9 +18,9 @@
 
 # Globale Variabelen.
 $AdminGroup = "SomeDomain\'Domain admins"
-$OuMaandWachten = "OU=MaandWachten, OU=Disabled Accounts,OU=Business,DC=Domain,DC=Org"
+$OuMaandWachten = "OU=MaandWachten, OU=Disabled Accounts,OU=SomeOU,DC=SomeDomain,DC=Org"
 $Year = 2024
-$OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=Business,DC=Domain,DC=Org"
+$OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=SomeOU,DC=SomeDomain,DC=Org"
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
 $MessageBodySend = $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
 
