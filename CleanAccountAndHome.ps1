@@ -26,7 +26,7 @@ $MessageBodySend = $MessageBody = @("De volgende accounts en home folders zijn o
 
 # Gebruikers ophalen uit de OU, en 'loop' door alle gevonden accounts.
 # Maar omdat een bepaald sleutelwoord meerdere properties kan ophalen, moet dat nog even getest worden.
-Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, Description | % {
+Get-ADUser -SearchBase $OuMaandWachten  -filter * -Properties HomeDirectory, Description | % {
 
     # Variabelen met betrekking tot het huidige account in de 'loop'.
     $Homedir = $_.HomeDirectory
