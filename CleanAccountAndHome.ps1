@@ -109,7 +109,7 @@ If ([string]$MessageBody -ne [string]$MessageBodySend) {
         Subject = "Accounts die opgeruimd zijn"
         Body = [string]$MessageBodySend
     }
-    # Stuur de e-mail!
+    # Stuur de e-mail!. This is not secure and is decrepit.
     Send-MailMessage @Email
 
     # Leeg het scherm en laat alle aanpassingen zien.
