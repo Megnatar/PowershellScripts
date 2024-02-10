@@ -24,15 +24,14 @@ $OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=Business,DC=D
 $OneMonthAgo = Get-Date (([datetime]::ParseExact((Get-Date -Format "yy-MM-dd"), 'yy-MM-dd', $null)).AddDays(-30)) -format "yy-MM-dd"
 $MessageBodySend = $MessageBody = @("De volgende accounts en home folders zijn opgeruimt:`n___________________________________________________`n`n")
 
-# Gebruikers ophalen uit de OU, en 'loop' door alle gevonden accounts. $mailNickName kan er uitgehaald worden.
+# Gebruikers ophalen uit de OU, en 'loop' door alle gevonden accounts.
 # Maar omdat een bepaald sleutelwoord meerdere properties kan ophalen, moet dat nog even getest worden.
-Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, mailNickName, Description | % {
+Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, Description | % {
 
     # Variabelen met betrekking tot het huidige account in de 'loop'.
     $Homedir = $_.HomeDirectory
     $SamAccountname = $_.SamAccountname
     $DateEndOfContract = $_.Description.Substring(0, 8)
-    # $Mailnickname = $_.MailNickName
 
     # Is de gebruiker al een maand uit dienst?
     if ($DateEndOfContract -lt $OneMonthAgo) {
@@ -46,10 +45,10 @@ Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, mailN
             Set-Acl $Homedir.FullName $Acl -Verbose
 
             # Vraag alle mappen op in de home folder van de gebruiker.
-            $Folders = Get-ChildItem $Homedir -Directory -Recurse
+            $AllFolders = Get-ChildItem $Homedir -Directory -Recurse
 
             # 'loop' door alle mappen en maak de 'Domain admins' groep eigenaar.
-            Foreach($Folder in $Folders) {
+            Foreach($Folder in $AllFolders) {
 
                 # Maakt de 'Domain admins' groep eigenaar van de huidige map in de 'loop'.
                 $Acl = Get-Acl $Folder.FullName
@@ -58,10 +57,10 @@ Get-ADUser -SearchBase $OuTussenfase  -filter * -Properties HomeDirectory, mailN
             }
 
            # Vraag alle bestanden op in de home folder van de gebruiker.
-            $Files = Get-ChildItem $Homedir -File -Recurse
+            $AllFiles = Get-ChildItem $Homedir -File -Recurse
 
             # 'loop' door alle bestanden en maak de 'Domain admins' groep eigenaar.
-            Foreach($File in $Files) {
+            Foreach($File in $AllFiles) {
 
                 # Maakt de 'Domain admins' groep eigenaar van het huidige bestand in de 'loop'.
                 $Acl = Get-Acl $File.FullName
