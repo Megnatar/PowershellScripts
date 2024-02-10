@@ -17,7 +17,7 @@
 #>
 
 # Globale Variabelen.
-$AdminGroup = "CONNECT\'Domain admins"
+$AdminGroup = "SomeDomain\'Domain admins"
 $OuMaandWachten = "OU=MaandWachten, OU=Disabled Accounts,OU=Business,DC=Domain,DC=Org"
 $Year = 2024
 $OuThisYear = "OU=_Disabled Accounts $Year,OU=Disabled Accounts,OU=Business,DC=Domain,DC=Org"
