@@ -3,8 +3,6 @@
     AddAdUser Versie 1.0
 
     Gecodeerd door Jos Severijnse.
-    
-
 #>
 # Leeg het scherm voor nieuw console script.
 cls
