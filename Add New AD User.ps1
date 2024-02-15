@@ -245,7 +245,7 @@ $Acl = Get-Acl $ProfilePath
 $Acl.SetOwner([System.Security.Principal.NTAccount]"SomeDomain\$SamAccount")
 Set-Acl $ProfilePath $Acl
 
-# Geef de user ook fullControll permission op de homefolder.
+# Geef de user ook fullControll permission op de homefolder sub folders en files.
 $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("SomeDomain\$SamAccount","FullControl", "ContainerInherit,ObjectInherit", "InheritOnly", "Allow")  
 $acl.addAccessRule($AccessRule)
 $acl | Set-Acl $ProfilePath
