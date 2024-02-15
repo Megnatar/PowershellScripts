@@ -237,7 +237,7 @@ Foreach ($group in $ExampleUserGroups) {
     Add-ADGroupMember -Identity $group -Members $SamAccount
 }
 
-# Maak de home folder aan
+# Maak de home folder aan.
 New-Item -ItemType Directory -Path $ProfilePath
 
 # Maakt de user owner van zijn/haar homefolder.
