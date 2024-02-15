@@ -264,10 +264,18 @@ Foreach ($group in $ExampleUserGroups) {
     Add-ADGroupMember -Identity $group -Members $SamAccount
 }
 
+# Maak de home folder aan
+New-Item -ItemType Directory -Path $ProfilePath
+
 # Maakt de user owner van zijn/haar homefolder.
-$Acl = Get-Acl $ProfilePath.FullName
-$Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$SamAccount")
-Set-Acl $ProfilePath.FullName $Acl -Verbose
+$Acl = Get-Acl $ProfilePath
+$Acl.SetOwner([System.Security.Principal.NTAccount]"SomeDomain\$SamAccount")
+Set-Acl $ProfilePath $Acl
+
+# Geef de user ook fullControll permission op de homefolder.
+$AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("SomeDomain\$SamAccount","FullControl", "ContainerInherit,ObjectInherit", "InheritOnly", "Allow")  
+$acl.addAccessRule($AccessRule)
+$acl | Set-Acl $ProfilePath
 
 # Maakt de Exchange online mailbox aan in de productieomgeving.
 # Deze stap wordt overgeslagen als er een account in de testomgeving wordt aangemaakt.
