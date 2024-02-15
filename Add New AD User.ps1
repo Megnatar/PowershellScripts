@@ -15,10 +15,10 @@ $FederationServer = 'SomeFederationServer'
 
 'Even checken of wij in de test of productie omgeving zitten.. . .   .'
 $TestOmgeving = Test-Connection -ComputerName $ServerExists -count 1 -Delay 1 -Quiet    # Zitten wij in test of productie? Returns True (1) als wij in test zitten.
-$Domain = If ($TestOmgeving) {"@TestSomeDomain.org"} Else {"@SomeDomain.org"}             # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
+$Domain = If ($TestOmgeving) {"@TestSomeDomain.org"} Else {"@SomeDomain.org"}           # Domein naam van de huidige omgeving. Alleen de nieuwe powershell ondersteund tennery operators. ? true : false
 $NewUser = $ExampleUser = $ChangeNumber = $ExpirationDate = $NewAccount = ''            # maakt al deze variabele weer leeg, zodra je het script opnieuw start. Voorkomt problemen bij een restart en is nodig voor while loops.
 $ExpirationTime = '23:00:00'                                                            # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
-$ProfilePath = '\\Domain.local\Company\users\'                                      # Path naar alle gebruikers profielen (RUPs)
+$ProfilePath = '\\Domain.local\Company\users\'                                          # Path naar alle gebruikers profielen (RUPs)
 $HomeDrive = 'Z'                                                                        # De drive waar alle profielen op staan.
 $Today = get-Date -Format 'yy-MM-dd'                                                    # De datum van vandaag. Wordt gebruikt als voorbeeld voor het invullen van de datum.
 $SleepPeriod = 10
@@ -26,34 +26,7 @@ $SleepPeriod = 10
 # Array met ongeldige groepen. Ongeldige groepen zijn groepen die appart moeten worden aangevraagd of niet meer van toepassing zijn.
 # Deze groepen worden verwijderd van het nieuwe account als het voorbeeld account deze groepen wel toegewezen heeft.
 $GroupToRemove = @(
-                   "BedrijfsHulpVerlening", `
-                   "Calamiteitenteam", `
-                   "JongeStadgenoten", `
-                   "Sec_Citrix_VDI_PowerUser", `
-                   "Sec_Citrix_VDI_Keyboard", `
-                   "Sec_SharePointOnline_ITs2020_Leden", `
-                   "Sec_Citrix_Testomgeving_KeyUsers", `
-                   "Sec_Jong Company ", `
-                   "Sec_MBX_Jong_Company ", `
-                   "Sec_EM_Laptops_GG", `
-                   "Sec_MobileIron_GG", `
-                   "Sec_MobileIron_Acronis_GG", `
-                   "Sec_MobileIron_Acronis_Android_GG", `
-                   "Sec_Microsoft365_Defender_licentie", `
-                   "Sec_Microsoft365_PowerBI_Premium_licentie", `
-                   "Sec_Microsoft365_Project_licentie", `
-                   "Sec_Microsoft365_Visio_licentie", `
-                   "Sec_Microsoft365_MyOfficeDays", `
-                   "Sec_Citrix_Testomgeving_Tobias FU update", `
-                   "Sec_OR", `
-                   "Vry~CtrlWORK^", `
-                   "Vry~Defender365^", `
-                   "Vry~IrFanView^", `
-                   "Vry~NitroPDF^", `
-                   "Vry~Power_BI_Premium^", `
-                   "Vry~Project365^", `
-                   "Vry~Visio365^", `
-                   "Vry~Data_VO^", `
+                   "SomeSecurityGroup", `
                    "Domain Users"
                    )
 
@@ -88,11 +61,11 @@ $UpnExist = Get-ADUser -filter {UserPrincipalName -like $Upn}
 # Plak hier dan een 2 of een opvolgnummer achter de naam van het account.
 If ($UpnExist) {
 
-    # Stop de naam (eerste letter voornaam plus achternaam) en het opvolgnummer in apparte varabele
+    # Stop de naam (eerste letter voornaam plus achternaam) en het opvolgnummer in apparte varabele.
     $UpnUser = $UpnExist.Substring(0, $UpnExist.IndexOf('@'))
     $UpnNumber = $UpnUser[-1]
 
-    # Als functie IsNuber True is, dan bestond er al een tweede account met vergelijkbare upn
+    # Als functie IsNuber True is, dan bestond er al een tweede account met vergelijkbare upn.
     if (IsNumber $UpnNumber) {
         $Upn = $Name[0] + $FullSurname.replace(' ', '') + ([int]::Parse($UpnNumber) + 1) + $Domain
     } else {
@@ -111,9 +84,9 @@ if (!$SamAccount) {
 }
 
 # Als het om een admin account gaat, negeer deze dan en gebruik het 2e account in de array.
-# Dit kan een bug veroozaken als er meer dan 999 SAM accounts zijn voor een gewone user!
+# Dit kan een bug veroozaken als er meer dan 99 SAM accounts zijn voor een gewone user!
 # maar ik betwijldat dat dit ooit zal gebeuren....
-If ($SamAccount.Substring(4, 2) -eq '99') {
+If ($SamAccount.Substring(4, 2) -eq '22') {
 
     $SamAccount = ((Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object SamAccountName -Descending | Select SamAccountName -First 2).SamAccountName)[1]
 }
