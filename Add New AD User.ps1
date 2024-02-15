@@ -166,7 +166,7 @@ Foreach ($group in $ExampleUserGroups) {
 ''
 'jaar-maand-dag ' + $Today
 
-# Zolang de verloopdatum leeg is of niet good is ingevulde. RETURN
+# Zolang de verloopdatum leeg is of niet goed is ingevulde. RETURN
 While (!$ExpirationDate) {
 
     $Date = Read-Host 'Verloopdatum van het account'
