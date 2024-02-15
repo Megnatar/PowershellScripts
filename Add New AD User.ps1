@@ -135,6 +135,7 @@ $Company = (Get-ADUser -identity $ExampleLSam -Properties * | select Company).Co
 # In welk OU moet het account worden aangemaakt.
 $OrganizationalUnit = ((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).Substring(((Get-ADUser $ExampleLSam | select DistinguishedName).DistinguishedName).IndexOf(',')+1)
 
+# Als het voorbeeldaccount inmiddels niet meer in dienst is. Exit!
 if ($OrganizationalUnit.Contains("Disabled Accounts")) {
 
     $OrganizationalUnit
