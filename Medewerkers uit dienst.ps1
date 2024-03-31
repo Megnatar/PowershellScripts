@@ -18,7 +18,7 @@ $i = 0
 $WriteToFile = @()
 $OrganizationalUnit = [System.Collections.ArrayList]@()
 $Properties = "Name, SamAccountName, AccountExpirationDate"
-$RootOU = "OU=Disabled users,OU=Organisatie,DC=SomeDomain,DC=org"
+$RootOU = "OU=Disabled users,OU=SomeOU,DC=SomeDomain,DC=org"
 $File = '.\' + (Get-Date -Format 'yy-MM-dd') + ' Disabled Accounts.txt'
 
 # Vraag de gebruiker of alles opgehaald moet worden of uit verschillende containers.
