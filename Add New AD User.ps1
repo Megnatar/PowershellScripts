@@ -28,6 +28,55 @@ $GroupToRemove = @(
                    "Domain Users"
                    )
 
+# Functie om te kijken of een variabele een string of een integer is.
+function IsNumber ($Value) {
+    return $value -match "^[\d\.]+$"
+}
+
+<#
+    Functie om de nieuwe gebruiker eigenaar te maken en volledig beheer over de homefolder te geven.
+
+    Met onderstaande commando's kan je de opties opvragen voor de verschillende
+    parameters voor de FileSystemAccessRule() method.
+    
+    FileSystemAccessRule($User, $FileSystemRights, $InheritanceFlags, $PropagationFlags, $AccessControlType) 
+
+    FileSystemRights:
+    [enum]::GetValues('System.Security.AccessControl.FileSystemRights')
+
+    InheritanceFlags:
+    [enum]::GetValues('System.Security.AccessControl.InheritanceFlags')
+  
+    PropagationFlags:
+    [enum]::GetValues('System.Security.AccessControl.PropagationFlags')
+
+    AccessControlType:
+    [enum]::GetValues('System.Security.AccessControl.AccessControlType')
+
+#>
+Function Set-FolderPermission {
+    Param($User, $Folder, $FolderNew)
+
+    if ($FolderNew) {
+        New-Item -ItemType Directory -Path $FolderNew
+        $Folder = $FolderNew
+    }
+
+    # Maakt de user owener.
+    $Acl = Get-Acl $Folder
+    $Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$User")
+
+    # Geef fullControl rechten op de map.
+    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("CONNECT\$User","FullControl","Allow")
+    $Acl.addAccessRule($AccessRule)
+    Set-Acl $Folder $Acl
+
+    # Geef fullcontrol en stel inheritance in.
+    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("CONNECT\$User","FullControl", "ContainerInherit,ObjectInherit", "InheritOnly", "Allow")  
+    $acl.addAccessRule($AccessRule)
+    $acl | Set-Acl $Folder
+}
+
 # Vraag naar de volledige naam van de nieuwe gebruiker/medewerker.
 ''
 'Geef de volledige naam van onze nieuwe medewerker op!'
@@ -239,15 +288,8 @@ Foreach ($group in $ExampleUserGroups) {
 # Maak de home folder aan.
 New-Item -ItemType Directory -Path $ProfilePath
 
-# Maakt de user owner van zijn/haar homefolder.
-$Acl = Get-Acl $ProfilePath
-$Acl.SetOwner([System.Security.Principal.NTAccount]"SomeDomain\$SamAccount")
-Set-Acl $ProfilePath $Acl
-
-# Geef de user ook fullControll permission op de homefolder sub folders en files.
-$AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("SomeDomain\$SamAccount","FullControl", "ContainerInherit,ObjectInherit", "InheritOnly", "Allow")  
-$acl.addAccessRule($AccessRule)
-$acl | Set-Acl $ProfilePath
+# Maak de user eigenaar van de home folder en geef fullcontol  permission.
+Set-FolderPermission $SamAccount $ProfilePath
 
 # Maakt de Exchange online mailbox aan in de productieomgeving.
 # Deze stap wordt overgeslagen als er een account in de testomgeving wordt aangemaakt.
