@@ -64,15 +64,15 @@ Function Set-FolderPermission {
 
     # Maakt de user owener.
     $Acl = Get-Acl $Folder
-    $Acl.SetOwner([System.Security.Principal.NTAccount]"CONNECT\$User")
+    $Acl.SetOwner([System.Security.Principal.NTAccount]"SomeDomain\$User")
 
     # Geef fullControl rechten op de map.
-    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("CONNECT\$User","FullControl","Allow")
+    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("SomeDomain\$User","FullControl","Allow")
     $Acl.addAccessRule($AccessRule)
     Set-Acl $Folder $Acl
 
     # Geef fullcontrol en stel inheritance in.
-    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("CONNECT\$User","FullControl", "ContainerInherit,ObjectInherit", "InheritOnly", "Allow")  
+    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("SomeDomain\$User","FullControl", "ContainerInherit,ObjectInherit", "InheritOnly", "Allow")  
     $acl.addAccessRule($AccessRule)
     $acl | Set-Acl $Folder
 }
