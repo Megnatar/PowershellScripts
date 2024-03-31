@@ -6,7 +6,6 @@
     Je kan meerdere OU's opgeven om de data uit op te halen.
 
     Geschreven door Jos Severijnse.
-
 #>
 cls
 
