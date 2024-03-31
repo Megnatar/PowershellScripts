@@ -172,9 +172,8 @@ While (!$ExampleUser) {
     }
 }
 
-# Maak de UPN en SAM account naam van het voorbeeldaccount aan.
-$ExampleUpn = ($ExampleUser.Substring(0, $ExampleUser.IndexOf(" ")))[0] + ($ExampleUser.Substring($ExampleUser.IndexOf(" ")+1)).replace(' ', '') + $Domain
-$ExampleLSam = (Get-ADUser -Filter {UserPrincipalName -eq $ExampleUpn} | Select SamAccountName).SamAccountName
+# Haal de namen van alle vergelijkbare SAM accounts op en sorteer de lijst van boven naar beneden.
+$SamAccount = (Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object SamAccountName -Descending | Select SamAccountName -First 1).SamAccountName
 
 # Vraag de properties op van het voorbeeldaccount.
 $Title = (Get-ADUser -identity $ExampleLSam -Properties * | select Title).Title
