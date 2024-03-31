@@ -172,8 +172,8 @@ While (!$ExampleUser) {
     }
 }
 
-# Haal de namen van alle vergelijkbare SAM accounts op en sorteer de lijst van boven naar beneden.
-$SamAccount = (Get-ADUser -Filter {SamAccountName -like $Account} | Sort-Object SamAccountName -Descending | Select SamAccountName -First 1).SamAccountName
+# Haal de Sam naam op van het voorbeeldaccount.
+$ExampleLSam = (get-aduser -filter {name -like $ExampleUser}).SamAccountName
 
 # Vraag de properties op van het voorbeeldaccount.
 $Title = (Get-ADUser -identity $ExampleLSam -Properties * | select Title).Title
