@@ -57,9 +57,10 @@ function IsNumber ($Value) {
 Function Set-FolderPermission {
     Param($User, $Folder, $FolderNew)
 
+    # Als $FolderNew wordt gebruikt. Dan moet $Folder het pad zijn naar waar de nieuwe map gemaakt moet worden.
     if ($FolderNew) {
-        New-Item -ItemType Directory -Path $FolderNew
-        $Folder = $FolderNew
+        $Folder = "$Folder\$FolderNew"
+        New-Item -ItemType Directory -Path $Folder
     }
 
     # Maakt de user owener.
