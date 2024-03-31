@@ -18,7 +18,7 @@ $WriteToFile = @()
 $OrganizationalUnit = [System.Collections.ArrayList]@()
 $Properties = "Name, SamAccountName, AccountExpirationDate"
 $RootOU = "OU=Disabled users,OU=SomeOU,DC=SomeDomain,DC=org"
-$File = '.\' + (Get-Date -Format 'yy-MM-dd') + ' Disabled Accounts.txt'
+$File = '.\' + (Get-Date -Format 'dd-MM-yy') + ' Disabled Accounts.txt'
 
 # Vraag de gebruiker of alles opgehaald moet worden of uit verschillende containers.
 "Met dit scriptje kan je accounts ophalen van mensen die uit dienst zijn.`nJe kan verschillende OU's opgeven of alle oude accounts ophalen.`n"
