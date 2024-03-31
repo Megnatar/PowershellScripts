@@ -321,8 +321,3 @@ if ($TestOmgeving -eq 0) {
 'Log in op het account van de gebruiker om de calender sharing in te te stellen.'
 ''
 'Vergeet daarna niet het vinkje aan te zetten dat de gebruiker het wachtwoord MOET wijzigen.'
-
-# Functie om te kijken of een variabele een string of een integer is.
-function IsNumber ($Value) {
-    return $value -match "^[\d\.]+$"
-}
