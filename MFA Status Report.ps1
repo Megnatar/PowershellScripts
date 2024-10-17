@@ -16,7 +16,7 @@ Write-Host "Momentje geduld......"
 $totalAccounts = $PreferredAuthenticationMethodEnabled = $IsSsprRegistered = $IsSsprEnabled = $IsSsprCapable = $IsPasswordlessCapable = $IsMfaRegistered = $IsMfaCapable = $IsAdmin = [int]$i = 0
 $users = $userAuthDetails = [psobject]$allUserDetails = @()
 
-[string]$TenantId           = "xxxxxx-xxxxxx-xxxxxx-xxxxxx"
+[string]$TenantId           = "xxxxxx-xxxxx-xxxxxx-xxxx"
 [string]$scriptFolder       = $PSScriptRoot
 [string]$scriptSubFolder    = Join-Path $scriptFolder "OutputFiles"
 [string]$html               = ""
