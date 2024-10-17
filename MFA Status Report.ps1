@@ -5,7 +5,7 @@
     Het rapport wordt bewaard in de folder waar het script staat. 
     In een map met de naam "OutputFiles". Ieder HTML rapport heeft een unique naam.
 
-    Deze code is geïnspireerd onderstaande website:
+    Deze code is geïnspireerd door onderstaande website:
     https://practical365.com/mfa-status-user-accounts/
 
     Geschreven door: Jos Severijnse.
