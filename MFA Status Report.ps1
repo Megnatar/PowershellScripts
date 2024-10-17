@@ -1,5 +1,5 @@
 <#
-    MFA Status Report v1.1.0
+    MFA Status Report v1.2.0
     
     Dit script genereert een authenticatie statusrapport van alle accounts in de cloud.
     Het rapport wordt bewaard in de folder waar het script staat. 
