@@ -35,7 +35,7 @@ $mailbox = $NewUser = $Date = $Password = $ExampleUser = $ChangeNumber = $Expira
 $ServerExists       = 'SomeServer'                                                            # De naam van de server in een testomgeving.
 $FederationServer   = 'SomeServer'                                                            # De naam van de Federation server.
 
-# Globale variabelen. Best pratice is om het date type te declaren.
+# Globale variabelen.
 $ExpirationTime     = '23:00:00'                                                               # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
 $Image              = 'SomeCompany.png'                                                        # SomeCompany image voor de welkoms brief.
 $ProfilePath        = '\\connect.local\SomeCompany\users\'                                     # Path naar alle gebruikers profielen (RUPs)
