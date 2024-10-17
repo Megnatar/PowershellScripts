@@ -22,7 +22,7 @@
     Zodra de brief is gemaakt, wordt er standaard een e-mail verzonden naar de helpdesk en topdesk.
     Na het zenden van de e-mail wordt die brief verplaatst naar de share met alle welkom brieven van het huidige jaar.
 
-    Geschreven door Jos Severijnse, in samenwerking met Michiel Vreeken.
+    Geschreven door Jos Severijnse
 #>
 
 
