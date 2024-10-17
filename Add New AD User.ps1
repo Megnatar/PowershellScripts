@@ -119,6 +119,7 @@ function Start-Browser {
     [enum]::GetValues('System.Security.AccessControl.AccessControlType')
 
 #>
+
 # Stel de NTFS eigenschappen in voor de home folder. $FolderNew is optioneel.
 Function Set-FolderPermission {
 
@@ -626,6 +627,7 @@ If (($NewUser -and ($NewUserTrue -eq 'True')) -and ($ExampleUser -and ($ExampleU
     $Upn            = $Name[0] + $FullSurname.replace(' ', '') + $Domain
     $Account        = (($Name[0] + $Name[1] + $Surname[0] + $Surname[1]).tolower() + "*")
 
+    # Als er al een gebruiker bestaat met de zelfde voor en achternaam. Dan is de gebruiker al eens in dienst geweest.
     if ($AccountAlreadyExist = Get-ADUser -Filter {Name -like $NewUser}) {
         cls
         write-host "Er bestaat al een account voor gebruiker $NewUser. Je moet het account weer aanzetten en handmatig instellen."
