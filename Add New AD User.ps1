@@ -38,8 +38,8 @@ $FederationServer   = 'SomeServer'                                              
 # Globale variabelen.
 $ExpirationTime     = '23:00:00'                                                               # 20:00:00 8 uur in de avond. Tijd is opioneel en kan gebruikt worden.
 $Image              = 'SomeCompany.png'                                                        # SomeCompany image voor de welkoms brief.
-$ProfilePath        = '\\connect.local\SomeCompany\users\'                                     # Path naar alle gebruikers profielen (RUPs)
-$pathToletters      = "\\connect.local\SomeCompany\SomePath\$(get-date -format yyyy)"
+$ProfilePath        = '\\domain.local\SomeCompany\users\'                                     # Path naar alle gebruikers profielen (RUPs)
+$pathToletters      = "\\domain.local\SomeCompany\SomePath\$(get-date -format yyyy)"
 $Today              = get-Date -Format 'dd-MM-yyyy'                                           # De datum van vandaag. Wordt niet gebruikt.
 $HomeDrive          = 'SomeDriveLetter'                                                       # De drive/mapping waar alle profielen op staan.
 $SleepPeriod        = 10                                                                      # Wacht periode is 10 seconde.
@@ -476,7 +476,7 @@ function Show-SendMail {
 
     $TextBoxFrom                    = New-Object system.Windows.Forms.TextBox
     $TextBoxFrom.multiline          = $false
-    $TextBoxFrom.text               = "BEHEER03Script@SomeCompany.nl"
+    $TextBoxFrom.text               = "SomeServer@SomeCompany.nl"
     $TextBoxFrom.width              = 170
     $TextBoxFrom.height             = 15
     $TextBoxFrom.location           = New-Object System.Drawing.Point(125,16)
